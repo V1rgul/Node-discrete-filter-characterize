@@ -1,0 +1,25 @@
+{
+  "name": "discrete-filter-characterize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "dft-easy": "^1.2.0"
+  },
+  "devDependencies": {
+    "gnu-plot": "^0.2.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/V1rgul/Node-discrete-filter-characterize.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/V1rgul/Node-discrete-filter-characterize/issues"
+  },
+  "homepage": "https://github.com/V1rgul/Node-discrete-filter-characterize#readme"
+}
