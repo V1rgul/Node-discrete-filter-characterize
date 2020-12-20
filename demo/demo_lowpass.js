@@ -18,7 +18,7 @@ let result = discreteFilterCharacterize.bode(
 	{
 		sampling:{
 			nyquist: {
-				// marginFrequency:200, // this gets the phase to 89°
+				marginFrequency:200, // this gets the phase to 89°. Useful if you need a lot of precision in the phase
 			},
 		},
 	}
