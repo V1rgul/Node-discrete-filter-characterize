@@ -16,19 +16,20 @@ function genExponentialSmoothing(f){
 let result = discreteFilterCharacterize.bode(
 	() => genExponentialSmoothing(1),
 	{
-
+		sampling:{
+			nyquist: {
+				// marginFrequency:200, // this gets the phase to 89°
+			},
+		},
 	}
 )
 
-// console.log("result", result)
 
 let resultsConverted  = result.map((e) => [
 	e[0],
 	utils.dB.fromRatio(e[1]),
 	e[2] / (Math.PI*2) * 360, // convert to degrees
 ])
-
-// console.log("resultsConverted",resultsConverted)
 
 let plot = gnuplot()
 plot.set({
