@@ -48,7 +48,16 @@ function constructOptions(optionsUser, useConstructed){
 		)
 	}
 
-	 if(optionsUser.sampling && optionsUser.sampling.type === "fixed") { // use static sampling
+	if(optionsUser.sampling && optionsUser.sampling.fn){
+		/**
+		 * User provided sampling calculation
+		 * @param f frequency currently analyzed
+		 * @return {step, duration} sampling period, sampling duration
+		 */
+		options.sampling.fn = optionsUser.sampling.fn
+	} else if(optionsUser.sampling && optionsUser.sampling.type === "fixed") {
+		// use static sampling
+
 		options.sampling.fixed = {}
 		options.sampling.type = "fixed"
 		utils.assign.fillDefaultsGen(options.sampling.fixed, optionsUser.sampling && optionsUser.sampling.fixed || {}, {
@@ -67,7 +76,9 @@ function constructOptions(optionsUser, useConstructed){
 				duration: options.sampling.fixed.duration
 			}
 		}
-	} else { // use dynamic sampling by default because it is faster
+	} else {
+		// use dynamic sampling by default because it is faster
+
 		options.sampling.type = "nyquist"
 		genSamplingNyquist()
 		options.sampling.fn = function(f){
