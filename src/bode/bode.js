@@ -2,17 +2,16 @@ let dftEasy = require("dft-easy")
 let utils = require("../utils")
 
 function genFilteredData(filterGenerator, options, f){
-	let samplingTime = 1/(f*options.nyquistMargin.frequency)
-	let samplingDuration = options.nyquistMargin.duration/f
-	// console.log("f", f, "samplingTime", samplingTime, "samplingDuration", samplingDuration)
-
 	let filter = filterGenerator()
+	let sampling = options.sampling.fn(f)
+	// console.log(sampling)
 
 	let filteredData = []
-	for(let t=0; t<=samplingDuration; t+=samplingTime){
+	for(let t=0; t<sampling.duration; t+=sampling.step){
 		let d = Math.cos(t*2*Math.PI*f)
-		filteredData.push([t, filter(d, samplingTime, t)])
+		filteredData.push([t, filter(d, sampling.step, t)])
 	}
+	// console.log(filteredData)
 	return filteredData
 }
 

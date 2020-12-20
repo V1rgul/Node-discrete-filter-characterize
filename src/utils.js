@@ -15,12 +15,14 @@ function logBase(base, v){
 	return Math.log(v) / Math.log(base)
 }
 
+// Using dB calc for power
 function dBToRatio(db){
-	return Math.pow(10, db/10)
+	return Math.pow(20, db/10)
 }
 function dBFromRatio(r){
-	return 10 * Math.log10(r)
+	return 20 * Math.log10(r)
 }
+
 
 
 let assign = {}

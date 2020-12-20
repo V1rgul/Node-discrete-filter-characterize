@@ -2,7 +2,6 @@ let bode = require("./bode")
 let utils = require("../utils")
 let dftEasy = require ("dft-easy")
 
-
 function constructOptions(optionsUser, useConstructed){
 	optionsUser = optionsUser || {}
 	if(useConstructed && optionsUser.constructed) return optionsUser
@@ -11,13 +10,6 @@ function constructOptions(optionsUser, useConstructed){
 	utils.assign.fillDefaultsGen(options, optionsUser, {
 		dftWindow: () => dftEasy.windows.Hann()
 	})
-
-	options.nyquistMargin = {}
-	utils.assign.fillDefaultsGen(options.nyquistMargin, optionsUser.nyquistMargin, {
-		frequency: () => 8,
-		duration : () => 4,
-	})
-
 
 	options.frequencies = {
 		list: (optionsUser.frequencies && optionsUser.frequencies.list) || {}
@@ -42,6 +34,52 @@ function constructOptions(optionsUser, useConstructed){
 		}
 	}
 
+
+	options.sampling = {}
+	let genSamplingNyquist = function genSamplingNyquist(){
+		options.sampling.nyquist = {}
+		utils.assign.fillDefaultsGen(
+			options.sampling.nyquist,
+			optionsUser.sampling && optionsUser.sampling.nyquist || {},
+			{
+				marginFrequency: () => 8,
+				marginDuration : () => 4,
+			}
+		)
+	}
+
+	 if(optionsUser.sampling && optionsUser.sampling.type === "fixed") { // use static sampling
+		options.sampling.fixed = {}
+		options.sampling.type = "fixed"
+		utils.assign.fillDefaultsGen(options.sampling.fixed, optionsUser.sampling && optionsUser.sampling.fixed || {}, {
+			frequency: function(){
+				genSamplingNyquist()
+				return options.sampling.nyquist.marginFrequency * options.frequencies.list[options.frequencies.list.length-1]
+			},
+			duration : function(){
+				genSamplingNyquist()
+				return options.sampling.nyquist.marginDuration / options.frequencies.list[0]
+			},
+		})
+		options.sampling.fn = function(f){
+			return {
+				step    : 1/options.sampling.fixed.frequency,
+				duration: options.sampling.fixed.duration
+			}
+		}
+	} else { // use dynamic sampling by default because it is faster
+		options.sampling.type = "nyquist"
+		genSamplingNyquist()
+		options.sampling.fn = function(f){
+			return {
+				step    : 1/(f*options.sampling.nyquist.marginFrequency),
+				duration: options.sampling.nyquist.marginDuration/f,
+			}
+		}
+	}
+
+	// console.log("optionsUser", optionsUser)
+	// console.log("options", options)
 	options.constructed = true
 	return options
 }
